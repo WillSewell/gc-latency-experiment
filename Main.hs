@@ -5,23 +5,24 @@ import qualified Control.Monad as Monad
 import qualified Data.ByteString as ByteString
 import qualified Data.Map.Strict as Map
 
-data Msg = Msg !Int !ByteString.ByteString
+type Msg = ByteString.ByteString
 
-type Chan = Map.Map Int ByteString.ByteString
+type Chan = Map.Map Int Msg
+
+windowSize = 200000
+msgCount = 1000000
 
 message :: Int -> Msg
-message n = Msg n (ByteString.replicate 1024 (fromIntegral n))
+message n = ByteString.replicate 1024 (fromIntegral n)
 
-pushMsg :: Chan -> Msg -> IO Chan
-pushMsg chan (Msg msgId msgContent) =
+pushMsg :: Chan -> Int -> IO Chan
+pushMsg chan highId =
   Exception.evaluate $
-    let
-      inserted = Map.insert msgId msgContent chan
-    in
-      if 200000 < Map.size inserted
-      then Map.deleteMin inserted
-      else inserted
+    let lowId = highId - windowSize in
+    let inserted = Map.insert highId (message highId) chan in
+    if lowId < 0 then inserted
+    else Map.delete lowId inserted
 
 main :: IO ()
-main = Monad.foldM_ pushMsg Map.empty (map message [1..1000000])
+main = Monad.foldM_ pushMsg Map.empty [0..msgCount]
 

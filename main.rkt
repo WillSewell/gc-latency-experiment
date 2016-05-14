@@ -1,36 +1,32 @@
 #lang racket/base
 
 (require racket/match)
-(struct msg (id content))
+
+(define window-size 200000)
+(define msg-count 1000000)
 
 (define get-time current-inexact-milliseconds)
 (define (message n)
-  (msg n
-       (make-string 1024
-                    (integer->char (modulo n 256)))))
+  (make-string 1024
+               (integer->char (modulo n 256))))
 
 (define worst 0.0)
 
-(define (push-msg st msg)
+(define (push-msg chan id-high)
   (define before (get-time))
-  (match-define (list hash count min-key) st)
-  (define inserted (hash-set hash (msg-id msg) (msg-content msg)))
-  (define new-count (add1 count))
-  (define new-st
-    (cond [(200000 . < . new-count)
-           (list (hash-remove inserted min-key)
-                 (sub1 new-count)
-                 (add1 min-key))]
-          [else
-           (list inserted new-count min-key)]))
+  (define id-low (id-high . - . window-size))
+  (define inserted (hash-set chan id-high (message id-high)))
+  (define result
+    (if (id-low . < . 0) inserted
+        (hash-remove inserted id-low)))
   (define after (get-time))
   (define duration (after . - . before))
   (set! worst (max worst duration))
-  new-st)
+  result)
 
 (define _
  (for/fold
-     ([st (list (make-immutable-hash) 0 0)])
-     ([i (in-range 1000000)])
-   (push-msg st (message i))))
+     ([chan (make-immutable-hash)])
+     ([i (in-range msg-count)])
+   (push-msg chan i)))
 (displayln worst)
