@@ -2,23 +2,6 @@
 
 (require racket/match)
 (struct msg (id content))
-(struct min-hash (table min-key))
-
-(define (mk-min-hash)
-  (min-hash (make-immutable-hash) #f))
-
-(define (min-hash-set mh k v)
-  (define mk  (min-hash-min-key mh))
-  (define tab (min-hash-table mh))
-  (define new-mk
-    (if mk (min k mk) k))
-  (min-hash (hash-set tab k v)
-            new-mk))
-
-(define (min-hash-remove-min mh)
-  (define mk  (min-hash-min-key mh))
-  (define tab (min-hash-table mh))
-  (min-hash (hash-remove tab mk) (add1 mk)))
 
 (define get-time current-inexact-milliseconds)
 (define (message n)
@@ -29,23 +12,25 @@
 (define worst 0.0)
 
 (define (push-msg st msg)
-  (match-define (list count map) st)
   (define before (get-time))
-  (define inserted (min-hash-set map (msg-id msg) (msg-content msg)))
+  (match-define (list hash count min-key) st)
+  (define inserted (hash-set hash (msg-id msg) (msg-content msg)))
   (define new-count (add1 count))
-  (define res
+  (define new-st
     (cond [(200000 . < . new-count)
-           (list count
-                 (min-hash-remove-min inserted))]
-          [else (list new-count inserted)]))
+           (list (hash-remove inserted min-key)
+                 (sub1 new-count)
+                 (add1 min-key))]
+          [else
+           (list inserted new-count min-key)]))
   (define after (get-time))
   (define duration (after . - . before))
   (set! worst (max worst duration))
-  res)
+  new-st)
 
 (define _
  (for/fold
-     ([st (list 0 (mk-min-hash))])
+     ([st (list (make-immutable-hash) 0 0)])
      ([i (in-range 1000000)])
    (push-msg st (message i))))
 (displayln worst)
