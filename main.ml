@@ -30,4 +30,4 @@ let () =
     |> Seq.fold_left push_msg IMap.empty
     |> ignore
   end;
-  Printf.printf "%.2E\n" !worst
+  Printf.printf "Worst pause: %.2E\n" !worst
