@@ -34,14 +34,14 @@ run-ocaml: ocaml
 
 # you need to "raco pkg install gcstats" first
 run-racket:
-	racket -l gcstats -t main.rkt | tee racket.log
+	PLT_INCREMENTAL_GC=1 racket -l gcstats -t main.rkt | tee racket.log
 
 analyze-racket:
 	@grep "Max pause time" racket.log
 
 # run Racket program with debug instrumentation
 run-racket-instrumented: main.rkt
-	PLTSTDERR=debug@GC racket main.rkt 2> racket.log
+	PLTSTDERR=debug@GC PLT_INCREMENTAL_GC=1 racket main.rkt 2> racket.log
 
 # collect histogram from debug instrumentation,
 # to be used *after* run-racket
