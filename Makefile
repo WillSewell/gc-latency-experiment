@@ -32,13 +32,20 @@ clean::
 run-ocaml: ocaml
 	./main.native
 
+# you need to "raco pkg install gcstats" first
+run-racket:
+	racket -l gcstats -t main.rkt | tee racket.log
+
+analyze-racket:
+	@grep "Max pause time" racket.log
+
 # run Racket program with debug instrumentation
-run-racket: main.rkt
-	PLTSTDERR=debug@GC racket --no-jit main.rkt 2> racket.log
+run-racket-instrumented: main.rkt
+	PLTSTDERR=debug@GC racket main.rkt 2> racket.log
 
 # collect histogram from debug instrumentation,
 # to be used *after* run-racket
-analyze-racket:
+analyze-racket-instrumented:
 	cat racket.log | grep -v total | cut -d' ' -f7 | sort -n | uniq --count
 
 # these will only work if OCaml has been built with --with-instrumented-runtime
