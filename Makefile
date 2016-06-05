@@ -58,3 +58,14 @@ run-ocaml-instrumented: ocaml-instrumented
 analyze-ocaml-instrumented:
 	$(OCAML_SOURCES)/tools/ocaml-instr-report ocaml.log | grep "dispatch:" -A13
 
+java: Main.java
+	javac Main.java
+
+clean::
+	rm -f Main.class
+
+run-java: java
+	java -verbosegc -cp . Main
+
+run-java-g1: java
+	java -XX:+UseG1GC -verbosegc -cp . Main
