@@ -65,7 +65,20 @@ clean::
 	rm -f Main.class
 
 run-java: java
-	java -verbosegc -cp . Main
+	java -verbosegc -cp . Main | tee java.log
+
+analyze-java:
+	@echo "longest Java pause time:"
+	@cat java.log | grep -o "[0-9.]* secs" | sort -n | tail -n 1
 
 run-java-g1: java
-	java -XX:+UseG1GC -verbosegc -cp . Main
+	java -XX:+UseG1GC -verbosegc -cp . Main | tee java-g1.log
+
+analyze-java-g1:
+	@echo "longest Java pause time (G1 collector):"
+	@cat java-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+# "concurrent" GC phases run concurrently with the mutator threads,
+# which means that the program keeps running, it would be wrong to count
+# them as pauses/latencies. (Instead of rejecting "concurrent-*" phases, one
+# option is to filter on "pause" events only, but there are events that are
+# not concurrents yet not marked as pauses in G1 logs, such as "remark").
