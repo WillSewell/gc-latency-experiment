@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"time"
+)
+
 type message []byte
 
 type channel map[int]message
@@ -8,6 +13,8 @@ const (
 	windowSize = 200000
 	msgCount   = 1000000
 )
+
+var worst time.Duration
 
 func mkMessage(n int) message {
 	m := make(message, 1024)
@@ -18,10 +25,15 @@ func mkMessage(n int) message {
 }
 
 func pushMsg(c *channel, highID int) {
+	start := time.Now()
 	lowID := highID - windowSize
 	(*c)[highID] = mkMessage(highID)
 	if lowID >= 0 {
 		delete(*c, lowID)
+	}
+	elapsed := time.Since(start)
+	if elapsed > worst {
+		worst = elapsed
 	}
 }
 
@@ -30,4 +42,5 @@ func main() {
 	for i := 0; i < msgCount; i++ {
 		pushMsg(&c, i)
 	}
+	fmt.Println("Worst push time: ", worst)
 }
