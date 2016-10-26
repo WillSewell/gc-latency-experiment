@@ -5,14 +5,14 @@ import (
 	"time"
 )
 
-type message []byte
-
-type channel map[int]message
-
 const (
 	windowSize = 200000
 	msgCount   = 1000000
 )
+
+type message []byte
+
+type channel [windowSize]message
 
 var worst time.Duration
 
@@ -26,11 +26,8 @@ func mkMessage(n int) message {
 
 func pushMsg(c *channel, highID int) {
 	start := time.Now()
-	lowID := highID - windowSize
-	(*c)[highID] = mkMessage(highID)
-	if lowID >= 0 {
-		delete(*c, lowID)
-	}
+	m := mkMessage(highID)
+	(*c)[highID%windowSize] = m
 	elapsed := time.Since(start)
 	if elapsed > worst {
 		worst = elapsed
@@ -38,7 +35,7 @@ func pushMsg(c *channel, highID int) {
 }
 
 func main() {
-	c := make(channel)
+	var c channel
 	for i := 0; i < msgCount; i++ {
 		pushMsg(&c, i)
 	}
