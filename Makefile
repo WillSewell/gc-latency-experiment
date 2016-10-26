@@ -82,3 +82,19 @@ analyze-java-g1:
 # them as pauses/latencies. (Instead of rejecting "concurrent-*" phases, one
 # option is to filter on "pause" events only, but there are events that are
 # not concurrents yet not marked as pauses in G1 logs, such as "remark").
+
+# compile Go program
+go: main.go
+	go build main.go
+
+clean::
+	rm -f main
+
+# run Go program and report times
+run-go: go
+	GODEBUG=gctrace=1 ./main 2> go.log
+	cat go.log
+
+analyze-go:
+	@echo "Worst pause:"
+	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
