@@ -69,18 +69,24 @@ clean::
 	rm -f *.class
 
 run-java-map: MainJavaUtilHashMap.class
-	java -Xmx1G -verbosegc -cp . MainJavaUtilHashMap | tee java.log
+	java -XX:+PrintFlagsFinal -Xmx512m -verbosegc -cp . MainJavaUtilHashMap | tee java.log
 
 analyze-java-map:
 	@echo "longest Java pause time:"
 	@cat java.log | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@echo "Heap size:"
+	@cat java.log | grep -o "InitialHeapSize.*:= [0-9]\+"
+	@cat java.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 
 run-java-map-g1: MainJavaUtilHashMap.class
-	java -Xmx1G $(G1_OPTS) -verbosegc -cp . MainJavaUtilHashMap | tee java-g1.log
+	java -XX:+PrintFlagsFinal -Xmx1G $(G1_OPTS) -verbosegc -cp . MainJavaUtilHashMap | tee java-g1.log
 
 analyze-java-map-g1:
 	@echo "longest Java pause time (G1 collector):"
 	@cat java-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@echo "Heap size:"
+	@cat java-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
+	@cat java-g1.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 # "concurrent" GC phases run concurrently with the mutator threads,
 # which means that the program keeps running, it would be wrong to count
 # them as pauses/latencies. (Instead of rejecting "concurrent-*" phases, one
@@ -88,11 +94,14 @@ analyze-java-map-g1:
 # not concurrents yet not marked as pauses in G1 logs, such as "remark").
 
 run-java-array-g1: MainJavaArray.class
-	java -Xmx512m $(G1_OPTS) -verbosegc MainJavaArray | tee java-array-g1.log
+	java -XX:+PrintFlagsFinal -Xmx512m $(G1_OPTS) -verbosegc MainJavaArray | tee java-array-g1.log
 
 analyze-java-array-g1:
 	@echo "Worst pause (array, G1):"
 	@cat java-array-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@echo "Heap size:"
+	@cat java-array-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
+	@cat java-array-g1.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 
 # compile Go program
 go: main.go
