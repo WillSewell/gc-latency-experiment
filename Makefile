@@ -121,8 +121,9 @@ clean::
 	rm -f main main.o
 
 run-d-ldc: d-ldc
-	./main "--DRT-gcopt=profile:1" > d-ldc.log
+	./main > d-ldc.log
 	cat d-ldc.log
 
 analyze-d-ldc:
-	@grep "Max Pause" d-ldc.log
+	@echo "Max Pause: "
+	@cat d-ldc.log
