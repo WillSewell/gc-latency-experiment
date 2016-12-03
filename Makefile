@@ -98,3 +98,18 @@ run-go: go
 analyze-go:
 	@echo "Worst pause:"
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
+
+# compile D program
+d: main.d
+	dmd main.d
+
+clean::
+	rm -f main main.o
+
+# run D program and report times
+run-d: d
+	./main "--DRT-gcopt=profile:1" > d.log
+	cat d.log
+
+analyze-d:
+	@grep "Max Pause" d.log
