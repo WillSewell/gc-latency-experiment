@@ -58,23 +58,27 @@ run-ocaml-instrumented: ocaml-instrumented
 analyze-ocaml-instrumented:
 	$(OCAML_SOURCES)/tools/ocaml-instr-report ocaml.log | grep "dispatch:" -A13
 
-java: Main.java
-	javac Main.java
+##### Java
+
+G1_OPTS = -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:ParallelGCThreads=2
+
+%.class: %.java
+	javac $<
 
 clean::
-	rm -f Main.class
+	rm -f *.class
 
-run-java: java
-	java -verbosegc -cp . Main | tee java.log
+run-java-map: MainJavaUtilHashMap.class
+	java -Xmx1G -verbosegc -cp . MainJavaUtilHashMap | tee java.log
 
-analyze-java:
+analyze-java-map:
 	@echo "longest Java pause time:"
 	@cat java.log | grep -o "[0-9.]* secs" | sort -n | tail -n 1
 
-run-java-g1: java
-	java -XX:+UseG1GC -verbosegc -cp . Main | tee java-g1.log
+run-java-map-g1: MainJavaUtilHashMap.class
+	java -Xmx1G $(G1_OPTS) -verbosegc -cp . MainJavaUtilHashMap | tee java-g1.log
 
-analyze-java-g1:
+analyze-java-map-g1:
 	@echo "longest Java pause time (G1 collector):"
 	@cat java-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
 # "concurrent" GC phases run concurrently with the mutator threads,
