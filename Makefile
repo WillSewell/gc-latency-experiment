@@ -87,6 +87,13 @@ analyze-java-map-g1:
 # option is to filter on "pause" events only, but there are events that are
 # not concurrents yet not marked as pauses in G1 logs, such as "remark").
 
+run-java-array-g1: MainJavaArray.class
+	java -Xmx512m $(G1_OPTS) -verbosegc MainJavaArray | tee java-array-g1.log
+
+analyze-java-array-g1:
+	@echo "Worst pause (array, G1):"
+	@cat java-array-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+
 # compile Go program
 go: main.go
 	go build main.go
