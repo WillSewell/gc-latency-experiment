@@ -100,16 +100,29 @@ analyze-go:
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
 
 # compile D program
-d: main.d
+d-dmd: main.d
 	dmd main.d
 
 clean::
 	rm -f main main.o
 
 # run D program and report times
-run-d: d
-	./main "--DRT-gcopt=profile:1" > d.log
-	cat d.log
+run-d-dmd: d-dmd
+	./main "--DRT-gcopt=profile:1" > d-dmd.log
+	cat d-dmd.log
 
-analyze-d:
-	@grep "Max Pause" d.log
+analyze-d-dmd:
+	@grep "Max Pause" d-dmd.log
+
+d-ldc: main.d
+	ldc2 main.d
+
+clean::
+	rm -f main main.o
+
+run-d-ldc: d-ldc
+	./main "--DRT-gcopt=profile:1" > d-ldc.log
+	cat d-ldc.log
+
+analyze-d-ldc:
+	@grep "Max Pause" d-ldc.log
