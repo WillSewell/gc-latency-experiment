@@ -119,3 +119,17 @@ run-d: d
 analyze-d:
 	@echo "Max Pause: "
 	@cat d.log
+
+eiffel: main.e
+	/opt/estudio/studio/spec/linux-x86-64/bin/ec -finalize main.e -library time
+	chmod +x main
+
+clean::
+	rm -rf main EIFGENs
+
+run-eiffel: eiffel
+	./main > eiffel.log
+	cat eiffel.log
+
+analyze-eiffel:	
+	@cat eiffel.log	
