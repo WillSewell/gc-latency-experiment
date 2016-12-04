@@ -98,3 +98,24 @@ run-go: go
 analyze-go:
 	@echo "Worst pause:"
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
+
+## D
+
+# we initially used DMD to make the measurements,
+# but LDC seems more portable and easier for people to acquire;
+# the results are exactly the same with both as they
+# share the same runtime
+
+d: main.d
+	ldc2 main.d
+
+clean::
+	rm -f main main.o
+
+run-d: d
+	./main > d.log
+	cat d.log
+
+analyze-d:
+	@echo "Max Pause: "
+	@cat d.log
