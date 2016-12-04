@@ -60,6 +60,8 @@ analyze-ocaml-instrumented:
 
 ##### Java
 
+#-XX:+PrintGCDetails
+ANALYZE_OPTS = -XX:+PrintFlagsFinal -XX:+PrintGCTimeStamps -verbosegc
 G1_OPTS = -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:ParallelGCThreads=2
 
 %.class: %.java
@@ -69,20 +71,22 @@ clean::
 	rm -f *.class
 
 run-java-map: MainJavaUtilHashMap.class
-	java -XX:+PrintFlagsFinal -Xmx512m -verbosegc -cp . MainJavaUtilHashMap | tee java.log
+	java -Xmx512m $(ANALYZE_OPTS) MainJavaUtilHashMap | tee java.log
 
 analyze-java-map:
-	@echo "longest Java pause time:"
-	@cat java.log | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@cat java.log | grep "Worst push time:"
+	@echo "Longest GC pause (ms):"
+	@cat java.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
 	@echo "Heap size:"
 	@cat java.log | grep -o "InitialHeapSize.*:= [0-9]\+"
 	@cat java.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 
 run-java-map-g1: MainJavaUtilHashMap.class
-	java -XX:+PrintFlagsFinal -Xmx1G $(G1_OPTS) -verbosegc -cp . MainJavaUtilHashMap | tee java-g1.log
+	java -Xmx1G $(ANALYZE_OPTS) $(G1_OPTS) MainJavaUtilHashMap | tee java-g1.log
 
 analyze-java-map-g1:
-	@echo "longest Java pause time (G1 collector):"
+	@cat java-g1.log | grep "Worst push time:"
+	@echo "Longest GC pause (ms):"
 	@cat java-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
 	@echo "Heap size:"
 	@cat java-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
@@ -94,10 +98,11 @@ analyze-java-map-g1:
 # not concurrents yet not marked as pauses in G1 logs, such as "remark").
 
 run-java-array-g1: MainJavaArray.class
-	java -XX:+PrintFlagsFinal -Xmx512m $(G1_OPTS) -verbosegc MainJavaArray | tee java-array-g1.log
+	java -Xmx512m $(ANALYZE_OPTS) $(G1_OPTS) MainJavaArray | tee java-array-g1.log
 
 analyze-java-array-g1:
-	@echo "Worst pause (array, G1):"
+	@cat java-array-g1.log | grep "Worst push time:"
+	@echo "Longest GC pause (ms):"
 	@cat java-array-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
 	@echo "Heap size:"
 	@cat java-array-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
