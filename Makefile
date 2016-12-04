@@ -58,30 +58,55 @@ run-ocaml-instrumented: ocaml-instrumented
 analyze-ocaml-instrumented:
 	$(OCAML_SOURCES)/tools/ocaml-instr-report ocaml.log | grep "dispatch:" -A13
 
-java: Main.java
-	javac Main.java
+##### Java
+
+#-XX:+PrintGCDetails
+ANALYZE_OPTS = -XX:+PrintFlagsFinal -XX:+PrintGCTimeStamps -verbosegc
+G1_OPTS = -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:ParallelGCThreads=2
+
+%.class: %.java
+	javac $<
 
 clean::
-	rm -f Main.class
+	rm -f *.class
 
-run-java: java
-	java -verbosegc -cp . Main | tee java.log
+run-java-map: MainJavaUtilHashMap.class
+	java -Xmx512m $(ANALYZE_OPTS) MainJavaUtilHashMap | tee java.log
 
-analyze-java:
-	@echo "longest Java pause time:"
-	@cat java.log | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+analyze-java-map:
+	@cat java.log | grep "Worst push time:"
+	@echo "Longest GC pause (ms):"
+	@cat java.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@echo "Heap size:"
+	@cat java.log | grep -o "InitialHeapSize.*:= [0-9]\+"
+	@cat java.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 
-run-java-g1: java
-	java -XX:+UseG1GC -verbosegc -cp . Main | tee java-g1.log
+run-java-map-g1: MainJavaUtilHashMap.class
+	java -Xmx1G $(ANALYZE_OPTS) $(G1_OPTS) MainJavaUtilHashMap | tee java-g1.log
 
-analyze-java-g1:
-	@echo "longest Java pause time (G1 collector):"
+analyze-java-map-g1:
+	@cat java-g1.log | grep "Worst push time:"
+	@echo "Longest GC pause (ms):"
 	@cat java-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@echo "Heap size:"
+	@cat java-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
+	@cat java-g1.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 # "concurrent" GC phases run concurrently with the mutator threads,
 # which means that the program keeps running, it would be wrong to count
 # them as pauses/latencies. (Instead of rejecting "concurrent-*" phases, one
 # option is to filter on "pause" events only, but there are events that are
 # not concurrents yet not marked as pauses in G1 logs, such as "remark").
+
+run-java-array-g1: MainJavaArray.class
+	java -Xmx512m $(ANALYZE_OPTS) $(G1_OPTS) MainJavaArray | tee java-array-g1.log
+
+analyze-java-array-g1:
+	@cat java-array-g1.log | grep "Worst push time:"
+	@echo "Longest GC pause (ms):"
+	@cat java-array-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
+	@echo "Heap size:"
+	@cat java-array-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
+	@cat java-array-g1.log | grep -o "MaxHeapSize.*:= [0-9]\+"
 
 # compile Go program
 go: main.go
