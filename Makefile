@@ -99,31 +99,23 @@ analyze-go:
 	@echo "Worst pause:"
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
 
-# compile D program
-d-dmd: main.d
-	dmd main.d
+## D
 
-clean::
-	rm -f main main.o
+# we initially used DMD to make the measurements,
+# but LDC seems more portable and easier for people to acquire;
+# the results are exactly the same with both as they
+# share the same runtime
 
-# run D program and report times
-run-d-dmd: d-dmd
-	./main "--DRT-gcopt=profile:1" > d-dmd.log
-	cat d-dmd.log
-
-analyze-d-dmd:
-	@grep "Max Pause" d-dmd.log
-
-d-ldc: main.d
+d: main.d
 	ldc2 main.d
 
 clean::
 	rm -f main main.o
 
-run-d-ldc: d-ldc
-	./main > d-ldc.log
-	cat d-ldc.log
+run-d: d
+	./main > d.log
+	cat d.log
 
-analyze-d-ldc:
+analyze-d:
 	@echo "Max Pause: "
-	@cat d-ldc.log
+	@cat d.log
