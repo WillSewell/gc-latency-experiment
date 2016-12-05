@@ -133,7 +133,7 @@ clean::
 	rm -rf obj
 
 # run C# program and report times
-run-cs: dotnet run> cs.log
+run-cs: dotnet run -c Release> cs.log
 	cat cs.log
 
 analyze-cs:
