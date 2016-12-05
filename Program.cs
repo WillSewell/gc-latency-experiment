@@ -11,29 +11,38 @@
         private const int msgCount = 10000000;
         private const int msgSize = 1024;
 
+        private static byte[][] array = new byte[msgCount][];
+
         private static byte[] createMessage(int n)
         {
-            return Enumerable.Repeat((byte)n, msgSize).ToArray();
+            var a = new byte[msgSize];
+            for (var i = 0; i < a.Length; i++)
+            {
+                a[i] = (byte)n;
+            }
+
+            return a;
         }
 
-        private static void pushMessage(Dictionary<int, byte[]> map, int id)
+        private static void pushMessage(int id)
         {
             var lowId = id - windowSize;
-            map.Add(id, createMessage(id));
+            array[id] = createMessage(id);
             if (lowId >= 0)
             {
-                map.Remove(lowId);
+                array[lowId] = null;
             }
         }
 
         static void Main(string[] args)
         {
             var worst = new TimeSpan();
-            var map = new Dictionary<int, byte[]>();
+            var sw = new Stopwatch();
             for (var i = 0; i < msgCount; i++)
             {
-                var sw = Stopwatch.StartNew();
-                pushMessage(map, i);
+                sw.Reset();
+                sw.Start();
+                pushMessage(i);
                 sw.Stop();
                 if (sw.Elapsed > worst)
                 {
