@@ -12,7 +12,7 @@ May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
 
 The following languages are currently included: Haskell, OCaml,
-Racket, Java, Go.
+Racket, Java, Go and D.
 
 # How to contribute
 
@@ -102,3 +102,9 @@ Gorgi Kosev runs another latency-copmarison benchmark, also inspired
 by the same blog post, but also involving HTTP requests, at
 <https://github.com/spion/hashtable-latencies>.
 
+Santeri Hiltunen has a nice [blog
+post](https://blog.hilzu.moe/2016/06/26/studying-gc-latencies/) with
+other measurements, in particular some information on tuning the Java
+benchmark, and a Javascript benchmark with similar explanations, and
+data on the importance of graph-of-pointers over contiguous data
+structures to reduce latencies.
