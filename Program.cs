@@ -3,8 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
-    class Main_
+    class Program
     {
         private const int windowSize = 200000;
         private const int msgCount = 10000000;
@@ -40,7 +41,7 @@
                 }
             }
 
-            Console.WriteLine($"Worst push time : {worst.TotalMilliseconds} ms");
+            Console.WriteLine($"Worst push time : {worst.TotalMilliseconds.ToString(CultureInfo.InvariantCulture)} ms");
         }
     }
 }

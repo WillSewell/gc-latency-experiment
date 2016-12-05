@@ -98,3 +98,19 @@ run-go: go
 analyze-go:
 	@echo "Worst pause:"
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
+
+# prepare to run C# program
+cs: dotnet restore
+
+clean::
+	rm -f project.lock.json
+	rm -rf bin
+	rm -rf obj
+
+# run C# program and report times
+run-cs: dotnet run> cs.log
+	cat cs.log
+
+analyze-cs:
+	@echo "Worst pause:"
+	@cat cs.log | grep -o "[0-9.]* ms" | sort -n | tail -n 1
