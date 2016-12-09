@@ -152,3 +152,6 @@ erlang:
 	erl -noshell main start -s init stop >> erlang.log
 clean::
 	rm -f *.beam
+
+analyze-erlang:
+	@cat erlang.log
