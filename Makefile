@@ -144,3 +144,10 @@ run-d: d
 analyze-d:
 	@echo "Max Pause: "
 	@cat d.log
+
+run-python:
+	python main.py > main.log
+	@cat main.log
+
+analyze-python:	
+	@cat python.log	
