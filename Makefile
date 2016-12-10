@@ -146,8 +146,8 @@ analyze-d:
 	@cat d.log
 
 run-python:
-	python3 main.py > main.log
-	@cat main.log
+	python3 main.py > python.log
+	@cat python.log
 
 analyze-python:	
 	@cat python.log	
