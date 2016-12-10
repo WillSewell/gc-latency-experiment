@@ -1,4 +1,4 @@
-from time import monotonic
+from time import process_time
 
 windowSize = 200000
 msgCount = 1000000
@@ -16,10 +16,10 @@ def pushMessage(map, id):
 #Main
 map = {}
 maxPause = 0.0
-lastTime = monotonic()
+lastTime = process_time()
 for i in range(msgCount):
 	pushMessage(map,i)
-	currentTime = monotonic()
+	currentTime = process_time()
 	iterPause = currentTime - lastTime
 	if iterPause > maxPause:
 		maxPause = iterPause
