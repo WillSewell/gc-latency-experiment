@@ -98,3 +98,15 @@ run-go: go
 analyze-go:
 	@echo "Worst pause:"
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
+
+c_gettimeofday: main_gettimeofday.c
+	$(CC) $^ -o $@
+
+c_clock: main_clock.c
+	$(CC) $^ -o $@
+
+c_times: main_times.c
+	$(CC) $^ -o $@
+
+clean::
+	rm -f c_clock c_gettimeofday c_times
