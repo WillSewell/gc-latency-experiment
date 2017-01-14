@@ -38,7 +38,8 @@ proc pushMsg1(b: var Buffer, highID: int) =
 
 proc main() =
   # Don't use GC_disable() and GC_step(). Instead use GC_setMaxPause().
-  GC_disableMarkAndSweep()
+  when defined(disableMS):
+    GC_disableMarkAndSweep()
   GC_setMaxPause(300)
 
   var b = newSeq[Msg](windowSize)

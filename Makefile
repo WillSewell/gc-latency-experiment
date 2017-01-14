@@ -148,7 +148,7 @@ analyze-d:
 ## Nim
 
 nim: main.nim
-	nim c -d:release -d:useRealtimeGC main.nim
+	nim c -d:release -d:disableMS -d:useRealtimeGC main.nim
 
 clean::
 	rm -f main
@@ -161,3 +161,18 @@ run-nim: nim
 analyze-nim:
 	@echo "Worst pause: "
 	@cat nim.log
+
+nim-ms: main.nim
+	nim c -d:release -d:useRealtimeGC main.nim
+
+clean::
+	rm -f main
+	rm -r nimcache
+
+run-nim-ms: nim
+	./main > nim-ms.log
+	cat nim-ms.log
+
+analyze-nim-ms:
+	@echo "Worst pause: "
+	@cat nim-ms.log
