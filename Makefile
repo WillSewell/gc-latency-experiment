@@ -144,3 +144,20 @@ run-d: d
 analyze-d:
 	@echo "Max Pause: "
 	@cat d.log
+
+## Nim
+
+nim: main.nim
+	nim c -d:release -d:useRealtimeGC main.nim
+
+clean::
+	rm -f main
+	rm -r nimcache
+
+run-nim: nim
+	./main > nim.log
+	cat nim.log
+
+analyze-nim:
+	@echo "Worst pause: "
+	@cat nim.log
