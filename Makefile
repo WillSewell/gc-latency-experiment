@@ -124,6 +124,17 @@ analyze-go:
 	@echo "Worst pause:"
 	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
 
+# PHP
+run-php:
+	php main.php | tee php.log
+
+analyze-php:
+	@echo "PHP Worst pause (ms) :"
+	@cat php.log
+
+clean::
+	@rm php.log
+
 ## D
 
 # we initially used DMD to make the measurements,
