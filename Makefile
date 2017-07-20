@@ -155,3 +155,10 @@ run-d: d
 analyze-d:
 	@echo "Max Pause: "
 	@cat d.log
+
+run-ruby:
+	ruby main.rb > ruby.log
+	@cat ruby.log
+
+analyze-ruby:
+	@cat ruby.log
