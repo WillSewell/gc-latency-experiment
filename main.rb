@@ -19,4 +19,4 @@ channel = []
 MSG_COUNT.times do |i|
   push_msg(channel, i)
 end
-puts "Worst push time: #{$worst}"
+puts "Worst push time: #{$worst * 1000}ms"
