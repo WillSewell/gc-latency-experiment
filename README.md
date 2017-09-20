@@ -12,7 +12,7 @@ May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
 
 The following languages are currently included: Haskell, OCaml,
-Racket, Java, Go and D.
+Racket, Java, Go, D, Ruby and PHP.
 
 # How to contribute
 
