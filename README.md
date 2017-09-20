@@ -12,11 +12,17 @@ May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
 
 The following languages are currently included: Haskell, OCaml,
-Racket, Java, Go and D.
+Racket, Java, Go, D, Ruby and PHP.
 
 # How to contribute
 
-Merge requests to implement support for a new language are
+The reference repository for this benchmark is Will Sewell's
+<https://github.com/WillSewell/gc-latency-experiment>. It was
+previously maintained by Gabriel Scherer at
+<https://gitlab.com/gasche/gc-latency-experiment>. Santeri Hiltunen
+has a fork at <https://github.com/Hilzu/gc-latency-experiment>.
+
+Pull requests to implement support for a new language are
 welcome. You may also send git patchsets (as produced for example by
 `git format-patch origin/trunk --stdout > contrib.patch`) as email
 attachment.
