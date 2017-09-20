@@ -5,7 +5,7 @@ observable from of a specific workflow in many languages.
 
 The workflow (allocating N 1Kio strings with only W kept in memory at
 any time, and the oldest string deallocated) comes from James
-Fischer's blog post [Low latency, large working set, and GHC’s garbage
+Fisher's blog post [Low latency, large working set, and GHC’s garbage
 collector: pick two of
 three](https://blog.pusher.com/latency-working-set-ghc-gc-pick-two/),
 May 2016, who identified it as a situation in which the GHC garbage
