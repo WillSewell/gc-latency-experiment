@@ -14,6 +14,19 @@ collector (Haskell) exhibits unpleasant latencies.
 The following languages are currently included: Haskell, OCaml,
 Racket, Java, Go, D, Ruby and PHP.
 
+# How to run
+
+Because each benchmark requires a language-specific toolchain to
+build/run, we have included Dockerfiles to make this environment
+consistent. With docker downloaded, a benchmark can be run with
+
+```
+docker build -t gc-racket racket
+docker run gc-racket
+```
+
+replacing `racket` with whatever language you are interested in.
+
 # How to contribute
 
 The reference repository for this benchmark is Will Sewell's
@@ -23,24 +36,14 @@ previously maintained by Gabriel Scherer at
 has a fork at <https://github.com/Hilzu/gc-latency-experiment>.
 
 Pull requests to implement support for a new language are
-welcome. You may also send git patchsets (as produced for example by
-`git format-patch origin/trunk --stdout > contrib.patch`) as email
-attachment.
+welcome.
 
-Please remember to edit the [Makefile](Makefile) to add the recipes to
-run and analyze the benchmark for your program: `run-foo` should run
-the benchmark for the language `foo` and store results in a `.log`
-file, and `analyze-foo` must extract a latency measurement from the
-`.log` file.
+The benchmark should write the worst case pause time in milliseconds
+to STDOUT. You must include a Dockerfile which installs the
+benchmark dependencies and runs the benchmark in the entrypoint.
 
-If you use non-standard settings or had to be careful about how you
-set-up the Makefile rules, please explain why in the comments. People
-that scrutinize a benchmark will want explanations for your choices.
-
-If you want to test different compilation/monitoring techniques, you
-can have set of rules per language -- for example Java has `java`
-rules using the default JVM parameters and `java-g1` rules to use the
-low-latency G1 collector.
+We encourage you to use the best performing compiler/runtime
+systems options.
 
 # How to measure worst-case latency
 
