@@ -8,12 +8,7 @@ $worst = 0;
 
 function mkMessage($highID)
 {
-    $m = [];
-    for ($i = 0 ; $i < 1024 ; $i++) {
-        $m[$i] = $highID;
-    }
-
-    return $m;
+    return str_repeat(pack("C", $highID), 1024);
 }
 
 function pushMsg(&$channel, $highID) {
