@@ -1,4 +1,4 @@
-# What 
+# What
 
 This repository contains code to measure the worst-case pauses
 observable from of a specific workflow in many languages.
@@ -57,7 +57,7 @@ There are two ways to measure worst-case pause time. One,
 "instrumentation", is to activate some sort of runtime
 monitoring/instrumentation that is specific to the language
 implementation, and get its worst-case-pause number. Another, "manual
-measure" is to simply measure time at each iteration, and compute the
+measure" is to measure time at each iteration, and compute the
 maximal difference.
 
 We recommend trying both ways (it's good to build knowledge of how to
