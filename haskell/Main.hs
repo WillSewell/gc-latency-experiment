@@ -1,5 +1,5 @@
 module Main (main) where
-  
+
 import qualified Control.Exception as Exception
 import qualified Control.Monad as Monad
 import qualified Data.Array.IO as Array
@@ -29,4 +29,4 @@ main :: IO ()
 main = do
   c <- Array.newArray_ (0, windowSize)
   worst <- Monad.foldM (pushMsg c) 0 [0..msgCount]
-  print worst
+  putStrLn $ "Worst-case pause time, measured in program: " ++ show worst
