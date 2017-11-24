@@ -18,10 +18,17 @@ Racket, Java, Go, D, Ruby and PHP.
 
 Because each benchmark requires a language-specific toolchain to build/run,
 we have included Dockerfiles to make this environment consistent.
-With docker downloaded, a benchmark can be run with
+With Docker downloaded, a benchmark can be run with
 
 ```
 make racket/results.txt
+```
+
+or by running Docker directly:
+
+```
+docker build -t gc-racket racket
+docker run gc-racket
 ```
 
 replacing `racket` with whatever language you are interested in.
