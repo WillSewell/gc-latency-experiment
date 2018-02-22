@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt
 
 .PHONY: all clean
 
@@ -38,3 +38,7 @@ racket/results.txt: racket/Dockerfile racket/docker-entrypoint.sh racket/main.rk
 ruby/results.txt: ruby/Dockerfile ruby/main.rb
 	docker build -t gc-ruby ruby
 	docker run gc-ruby > $@
+
+node/results.txt: node/Dockerfile node/main.js
+	docker build -t gc-node node
+	docker run gc-node > $@
