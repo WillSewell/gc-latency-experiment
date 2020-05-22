@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt
 
 .PHONY: all clean
 
@@ -42,3 +42,7 @@ ruby/results.txt: ruby/Dockerfile ruby/main.rb
 node/results.txt: node/Dockerfile node/main.js
 	docker build -t gc-node node
 	docker run gc-node > $@
+
+dotnet/results.txt: dotnet/Dockerfile dotnet/dotnet.csproj dotnet/Program.cs
+	docker build -t gc-dotnet dotnet
+	docker run gc-dotnet > $@
