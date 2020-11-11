@@ -7,18 +7,15 @@ msgSize = 1024
 def createMessage(n):
 	return bytearray([n%256 for i in range(msgSize)])
 	
-def pushMessage(map, id):
-	lowId = id - windowSize
-	map[id] = createMessage(id)
-	if lowId >= 0:
-		del map[lowId]
+def pushMessage(channel, id):
+	channel[id%windowSize] = createMessage(id)
 
 #Main
-map = {}
+channel = [None] * windowSize
 maxPause = 0.0
 lastTime = process_time()
 for i in range(msgCount):
-	pushMessage(map,i)
+	pushMessage(channel, i)
 	currentTime = process_time()
 	iterPause = currentTime - lastTime
 	if iterPause > maxPause:
