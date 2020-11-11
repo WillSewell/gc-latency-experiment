@@ -1,40 +1,55 @@
-# What 
+# What
 
 This repository contains code to measure the worst-case pauses
 observable from of a specific workflow in many languages.
 
 The workflow (allocating N 1Kio strings with only W kept in memory at
 any time, and the oldest string deallocated) comes from James
-Fischer's blog post [Low latency, large working set, and GHC’s garbage
+Fisher's blog post [Low latency, large working set, and GHC’s garbage
 collector: pick two of
 three](https://blog.pusher.com/latency-working-set-ghc-gc-pick-two/),
 May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
 
 The following languages are currently included: Haskell, OCaml,
-Racket, Java, Go and D.
+Racket, Java, Go, D, Ruby and PHP.
+
+# How to run
+
+Because each benchmark requires a language-specific toolchain to build/run,
+we have included Dockerfiles to make this environment consistent.
+With Docker downloaded, a benchmark can be run with
+
+```
+make racket/results.txt
+```
+
+or by running Docker directly:
+
+```
+docker build -t gc-racket racket
+docker run gc-racket
+```
+
+replacing `racket` with whatever language you are interested in.
 
 # How to contribute
 
-Merge requests to implement support for a new language are
-welcome. You may also send git patchsets (as produced for example by
-`git format-patch origin/trunk --stdout > contrib.patch`) as email
-attachment.
+The reference repository for this benchmark is Will Sewell's
+<https://github.com/WillSewell/gc-latency-experiment>. It was
+previously maintained by Gabriel Scherer at
+<https://gitlab.com/gasche/gc-latency-experiment>. Santeri Hiltunen
+has a fork at <https://github.com/Hilzu/gc-latency-experiment>.
 
-Please remember to edit the [Makefile](Makefile) to add the recipes to
-run and analyze the benchmark for your program: `run-foo` should run
-the benchmark for the language `foo` and store results in a `.log`
-file, and `analyze-foo` must extract a latency measurement from the
-`.log` file.
+Pull requests to implement support for a new language are
+welcome.
 
-If you use non-standard settings or had to be careful about how you
-set-up the Makefile rules, please explain why in the comments. People
-that scrutinize a benchmark will want explanations for your choices.
+The benchmark should write the worst case pause time in milliseconds
+to STDOUT. You must include a Dockerfile which installs the
+benchmark dependencies and runs the benchmark in the entrypoint.
 
-If you want to test different compilation/monitoring techniques, you
-can have set of rules per language -- for example Java has `java`
-rules using the default JVM parameters and `java-g1` rules to use the
-low-latency G1 collector.
+We encourage you to use the best performing compiler/runtime
+systems options.
 
 # How to measure worst-case latency
 
@@ -48,7 +63,7 @@ There are two ways to measure worst-case pause time. One,
 "instrumentation", is to activate some sort of runtime
 monitoring/instrumentation that is specific to the language
 implementation, and get its worst-case-pause number. Another, "manual
-measure" is to simply measure time at each iteration, and compute the
+measure" is to measure time at each iteration, and compute the
 maximal difference.
 
 We recommend trying both ways (it's good to build knowledge of how to

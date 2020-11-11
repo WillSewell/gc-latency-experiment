@@ -1,153 +1,52 @@
-# if you want to use analyze-ocaml-instrumented, set this to a source
-# checkout of OCaml 4.03 or later
-OCAML_SOURCES=~/Prog/ocaml/github-trunk
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt
 
-all:
-	@echo "see Makefile for targets"
+.PHONY: all clean
 
-# compile Haskell program
-haskell: Main.hs
-	ghc -O2 -optc-O3 Main.hs
+all: $(RESULTS)
 
-clean::
-	rm -f Main.o Main.hi
+clean:
+	rm -f $(RESULTS)
 
-# run Haskell program and report times
-run-haskell: haskell
-	./Main +RTS -s 2> haskell.log
-	cat haskell.log
+d/results.txt: d/Dockerfile d/main.d
+	docker build -t gc-d d
+	docker run gc-d > $@
 
-analyze-haskell:
-	@echo "Worst old-generation pause:"
-	@cat haskell.log | grep "Gen  1" | sed "s/ /\n/g" | tail -n 1
+go/results.txt: go/Dockerfile go/main.go
+	docker build -t gc-go go
+	docker run gc-go > $@
 
-# compile OCaml program
-ocaml: main.ml
-	ocamlbuild -use-ocamlfind main.native
+haskell/results.txt: haskell/Dockerfile haskell/Main.hs
+	docker build -t gc-haskell haskell
+	docker run gc-haskell > $@
 
-clean::
-	ocamlbuild -clean
+java/results.txt: java/Dockerfile java/Main.java
+	docker build -t gc-java java
+	docker run gc-java > $@
 
-# run OCaml program; only reports the last time
-run-ocaml: ocaml
-	./main.native
+ocaml/results.txt: ocaml/Dockerfile ocaml/_tags ocaml/main.ml
+	docker build -t gc-ocaml ocaml
+	docker run gc-ocaml > $@
 
-# you need to "raco pkg install gcstats" first
-run-racket:
-	PLT_INCREMENTAL_GC=1 racket -l gcstats -t main.rkt | tee racket.log
+php/results.txt: php/Dockerfile php/main.php
+	docker build -t gc-php php
+	docker run gc-php > $@
 
-analyze-racket:
-	@grep "Max pause time" racket.log
+racket/results.txt: racket/Dockerfile racket/docker-entrypoint.sh racket/main.rkt
+	docker build -t gc-racket racket
+	docker run gc-racket > $@
 
-# run Racket program with debug instrumentation
-run-racket-instrumented: main.rkt
-	PLTSTDERR=debug@GC PLT_INCREMENTAL_GC=1 racket main.rkt 2> racket.log
+ruby/results.txt: ruby/Dockerfile ruby/main.rb
+	docker build -t gc-ruby ruby
+	docker run gc-ruby > $@
 
-# collect histogram from debug instrumentation,
-# to be used *after* run-racket
-analyze-racket-instrumented:
-	cat racket.log | grep -v total | cut -d' ' -f7 | sort -n | uniq --count
+node/results.txt: node/Dockerfile node/main.js
+	docker build -t gc-node node
+	docker run gc-node > $@
 
-# these will only work if OCaml has been built with --with-instrumented-runtime
-ocaml-instrumented: main.ml
-	ocamlbuild -use-ocamlfind -tag "runtime_variant(i)" main.native
+dotnet/results.txt: dotnet/Dockerfile dotnet/dotnet.csproj dotnet/Program.cs
+	docker build -t gc-dotnet dotnet
+	docker run gc-dotnet > $@
 
-run-ocaml-instrumented: ocaml-instrumented
-	OCAML_INSTR_FILE="ocaml.log" ./main.native
-
-analyze-ocaml-instrumented:
-	$(OCAML_SOURCES)/tools/ocaml-instr-report ocaml.log | grep "dispatch:" -A13
-
-##### Java
-
-#-XX:+PrintGCDetails
-ANALYZE_OPTS = -XX:+PrintFlagsFinal -XX:+PrintGCTimeStamps -verbosegc
-G1_OPTS = -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:ParallelGCThreads=2
-
-%.class: %.java
-	javac $<
-
-clean::
-	rm -f *.class
-
-run-java-map: MainJavaUtilHashMap.class
-	java -Xmx512m $(ANALYZE_OPTS) MainJavaUtilHashMap | tee java.log
-
-analyze-java-map:
-	@cat java.log | grep "Worst push time:"
-	@echo "Longest GC pause (ms):"
-	@cat java.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
-	@echo "Heap size:"
-	@cat java.log | grep -o "InitialHeapSize.*:= [0-9]\+"
-	@cat java.log | grep -o "MaxHeapSize.*:= [0-9]\+"
-
-run-java-map-g1: MainJavaUtilHashMap.class
-	java -Xmx1G $(ANALYZE_OPTS) $(G1_OPTS) MainJavaUtilHashMap | tee java-g1.log
-
-analyze-java-map-g1:
-	@cat java-g1.log | grep "Worst push time:"
-	@echo "Longest GC pause (ms):"
-	@cat java-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
-	@echo "Heap size:"
-	@cat java-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
-	@cat java-g1.log | grep -o "MaxHeapSize.*:= [0-9]\+"
-# "concurrent" GC phases run concurrently with the mutator threads,
-# which means that the program keeps running, it would be wrong to count
-# them as pauses/latencies. (Instead of rejecting "concurrent-*" phases, one
-# option is to filter on "pause" events only, but there are events that are
-# not concurrents yet not marked as pauses in G1 logs, such as "remark").
-
-run-java-array-g1: MainJavaArray.class
-	java -Xmx512m $(ANALYZE_OPTS) $(G1_OPTS) MainJavaArray | tee java-array-g1.log
-
-analyze-java-array-g1:
-	@cat java-array-g1.log | grep "Worst push time:"
-	@echo "Longest GC pause (ms):"
-	@cat java-array-g1.log | grep -v concurrent | grep -o "[0-9.]* secs" | sort -n | tail -n 1
-	@echo "Heap size:"
-	@cat java-array-g1.log | grep -o "InitialHeapSize.*:= [0-9]\+"
-	@cat java-array-g1.log | grep -o "MaxHeapSize.*:= [0-9]\+"
-
-# compile Go program
-go: main.go
-	go build main.go
-
-clean::
-	rm -f main
-
-# run Go program and report times
-run-go: go
-	GODEBUG=gctrace=1 ./main 2> go.log
-	cat go.log
-
-analyze-go:
-	@echo "Worst pause:"
-	@cat go.log | sed -n 's/.*: \([0-9][0-9]*\.*[0-9][0-9]*\)+.*+\([0-9][0-9]*\.*[0-9][0-9]*\).*/\1:\2/p' | tr ':' "\n" | sort | tail -1 | sed 's/$$/ms/'
-
-## D
-
-# we initially used DMD to make the measurements,
-# but LDC seems more portable and easier for people to acquire;
-# the results are exactly the same with both as they
-# share the same runtime
-
-d: main.d
-	ldc2 main.d
-
-clean::
-	rm -f main main.o
-
-run-d: d
-	./main > d.log
-	cat d.log
-
-analyze-d:
-	@echo "Max Pause: "
-	@cat d.log
-
-run-python:
-	python3 main.py > python.log
-	@cat python.log
-
-analyze-python:	
-	@cat python.log	
+python/results.txt: python/Dockerfile python/main.py
+	docker build -t gc-python python
+	docker run gc-python > $@
