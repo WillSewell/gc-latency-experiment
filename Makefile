@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results_clock.txt c/results_gettimeofday.txt c/results_times.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt
 
 .PHONY: all clean
 
@@ -51,14 +51,6 @@ python/results.txt: python/Dockerfile python/main.py
 	docker build -t gc-python python
 	docker run gc-python > $@
 
-c/results_clock.txt: c/Dockerfile c/main_clock.c
+c/results.txt: c/Dockerfile c/main.c
 	docker build -t gc-c c
-	docker run gc-c ./main_clock > $@
-
-c/results_gettimeofday.txt: c/Dockerfile c/main_gettimeofday.c
-	docker build -t gc-c c
-	docker run gc-c ./main_gettimeofday > $@
-
-c/results_times.txt: c/Dockerfile c/main_times.c
-	docker build -t gc-c c
-	docker run gc-c ./main_times > $@
+	docker run gc-c ./main > $@
