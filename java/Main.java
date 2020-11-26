@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class MainJavaArray {
+public class Main {
 
     private static final int windowSize = 200_000;
     private static final int msgCount = 1_000_000;
