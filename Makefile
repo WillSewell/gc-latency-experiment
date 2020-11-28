@@ -51,6 +51,6 @@ python/results.txt: python/Dockerfile python/main.py
 	docker build -t gc-python python
 	docker run gc-python > $@
 
-erlang/results.txt:
+erlang/results.txt: erlang/Dockerfile erlang/main.erl
 	docker build -t gc-erlang erlang
 	docker run gc-erlang > $@
