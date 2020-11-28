@@ -11,9 +11,6 @@ three](https://blog.pusher.com/latency-working-set-ghc-gc-pick-two/),
 May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
 
-The following languages are currently included: Haskell, OCaml,
-Racket, Java, Go, D, Ruby, PHP, Javascript (node), and C# (.NET)
-
 # How to run
 
 Because each benchmark requires a language-specific toolchain to build/run,
