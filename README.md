@@ -35,8 +35,7 @@ replacing `racket` with whatever language you are interested in.
 The reference repository for this benchmark is Will Sewell's
 <https://github.com/WillSewell/gc-latency-experiment>. It was
 previously maintained by Gabriel Scherer at
-<https://gitlab.com/gasche/gc-latency-experiment>. Santeri Hiltunen
-has a fork at <https://github.com/Hilzu/gc-latency-experiment>.
+<https://gitlab.com/gasche/gc-latency-experiment>.
 
 Pull requests to implement support for a new language are
 welcome.
