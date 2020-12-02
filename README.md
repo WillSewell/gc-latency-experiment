@@ -4,15 +4,12 @@ This repository contains code to measure the worst-case pauses
 observable from of a specific workflow in many languages.
 
 The workflow (allocating N 1Kio strings with only W kept in memory at
-any time, and the oldest string deallocated) comes from James
-Fisher's blog post [Low latency, large working set, and GHC’s garbage
-collector: pick two of
+any time, and the oldest string deallocated) comes from [James
+Fisher](https://jameshfisher.com)'s blog post [Low latency, large
+working set, and GHC’s garbage collector: pick two of
 three](https://blog.pusher.com/latency-working-set-ghc-gc-pick-two/),
 May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
-
-The following languages are currently included: Haskell, OCaml,
-Racket, Java, Go, D, Ruby, PHP, Javascript (node), and C# (.NET)
 
 # How to run
 
@@ -38,8 +35,7 @@ replacing `racket` with whatever language you are interested in.
 The reference repository for this benchmark is Will Sewell's
 <https://github.com/WillSewell/gc-latency-experiment>. It was
 previously maintained by Gabriel Scherer at
-<https://gitlab.com/gasche/gc-latency-experiment>. Santeri Hiltunen
-has a fork at <https://github.com/Hilzu/gc-latency-experiment>.
+<https://gitlab.com/gasche/gc-latency-experiment>.
 
 Pull requests to implement support for a new language are
 welcome.
