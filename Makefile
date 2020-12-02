@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt
 
 .PHONY: all clean
 
@@ -54,3 +54,7 @@ python/results.txt: python/Dockerfile python/main.py
 c/results.txt: c/Dockerfile c/main.c
 	docker build -t gc-c c
 	docker run gc-c ./main > $@
+
+erlang/results.txt: erlang/Dockerfile erlang/main.erl
+	docker build -t gc-erlang erlang
+	docker run gc-erlang > $@
