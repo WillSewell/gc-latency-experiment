@@ -1,4 +1,4 @@
-FROM openjdk:8u141
+FROM openjdk:16
 COPY Main.java .
 RUN javac Main.java
-ENTRYPOINT ["java", "-Xmx512m", "-XX:+PrintFlagsFinal", "-XX:+PrintGCTimeStamps", "-verbosegc", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=10", "-XX:ParallelGCThreads=2", "Main"]
+ENTRYPOINT ["java", "-Xmx512m", "-XX:+PrintFlagsFinal", "-verbosegc", "-XX:+UseZGC", "-XX:MaxGCPauseMillis=10", "-XX:ParallelGCThreads=2", "Main"]
