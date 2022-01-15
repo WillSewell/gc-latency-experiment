@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt crystal/results.txt
 
 .PHONY: all clean
 
@@ -58,3 +58,7 @@ c/results.txt: c/Dockerfile c/main.c
 erlang/results.txt: erlang/Dockerfile erlang/main.erl
 	docker build -t gc-erlang erlang
 	docker run gc-erlang > $@
+
+crystal/results.txt: crystal/Dockerfile crystal/main.cr
+	docker build -t gc-crystal crystal
+	docker run gc-crystal ./main > $@
