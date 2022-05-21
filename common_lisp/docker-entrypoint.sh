@@ -6,7 +6,7 @@ case "$CL_IMPL" in
 	ecl-interp)
 		ecl --shell main.lisp;;
 	ecl-compile)
-		ecl --compile main.lisp | grep -v '^;'
+		ecl --compile main.lisp >/dev/null
 		ecl --shell main.fas
 		rm main.fas;;
 	ccl)
