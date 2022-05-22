@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt crystal/results.txt common_lisp/results.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt crystal/results.txt common-lisp/results-sbcl.txt common-lisp/results-sbcl.txt common-lisp/results-ecl-interp.txt common-lisp/results-ecl-compile.txt common-lisp/results-ccl.txt
 
 .PHONY: all clean
 
@@ -63,7 +63,18 @@ crystal/results.txt: crystal/Dockerfile crystal/main.cr
 	docker build -t gc-crystal crystal
 	docker run gc-crystal ./main > $@
 
-CL_IMPL=sbcl
-common_lisp/results.txt: common_lisp/Dockerfile common_lisp/docker-entrypoint.sh common_lisp/main.lisp
-	docker build -t gc-common_lisp common_lisp
-	docker run --env CL_IMPL=$(CL_IMPL) gc-common_lisp > $@
+common-lisp/results-sbcl.txt: common-lisp/main.lisp
+	docker build -f common-lisp/Dockerfile.sbcl -t gc-sbcl common-lisp
+	docker run gc-sbcl > $@
+
+common-lisp/results-ecl-interp.txt: common-lisp/main.lisp
+	docker build -f common-lisp/Dockerfile.ecl-interp -t gc-ecl-interp common-lisp
+	docker run gc-ecl-interp > $@
+
+common-lisp/results-ecl-compile.txt: common-lisp/main.lisp
+	docker build -f common-lisp/Dockerfile.ecl-compile -t gc-ecl-compile common-lisp
+	docker run gc-ecl-compile > $@
+
+common-lisp/results-ccl.txt: common-lisp/main.lisp
+	docker build -f common-lisp/Dockerfile.ccl -t gc-ccl common-lisp
+	docker run gc-ccl > $@

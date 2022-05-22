@@ -1,0 +1,4 @@
+FROM clfoundation/ecl:21.2.1
+COPY main.lisp .
+RUN ecl --compile main.lisp > /dev/null
+ENTRYPOINT ["ecl", "--shell", "main.fas"]
