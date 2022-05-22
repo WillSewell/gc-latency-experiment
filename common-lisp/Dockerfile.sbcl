@@ -1,0 +1,3 @@
+FROM clfoundation/sbcl:2.2.4
+COPY main.lisp .
+ENTRYPOINT ["sbcl", "--script", "main.lisp"]
