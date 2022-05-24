@@ -11,6 +11,31 @@ three](https://blog.pusher.com/latency-working-set-ghc-gc-pick-two/),
 May 2016, who identified it as a situation in which the GHC garbage
 collector (Haskell) exhibits unpleasant latencies.
 
+# Results
+
+| Language                             | Longest pause (ms)                      |
+| -------------------------------------| --------------------------------------- |
+| C (GCC 12.1)                         | 0.379                                   |
+| Common Lisp (CCL 1.12)               | Unknown - not supported on architecture |
+| Common Lisp (ECL 21.2.1 compiled)    | 6                                       |
+| Common Lisp (ECL 21.2.1 interpreted) | 7                                       |
+| Common Lisp (SBCL 2.2.4 interpreted) | 779                                     |
+| Crystal (1.4)                        | Unknown - not supported on architecture |
+| D (LDC 1.9.0)                        | 1.926                                   |
+| Erlang (25.0)                        | 16.076                                  |
+| .NET (6.0)                           | 17.343                                  |
+| Go (1.18)                            | 4.209                                   |
+| Haskell (GHC 9.2)                    | 116.283                                 |
+| Java (OpenJDK 19)                    | 15                                      |
+| Node (18.2)                          | 70                                      |
+| OCaml (4.12)                         | 81.594                                  |
+| PHP (8.1)                            | 6.694                                   |
+| Python (3.9)                         | 11.830                                  |
+| Racket (7.9)                         | 323.15                                  |
+| Ruby (3.1)                           | 5.887                                   |
+
+On Macbook Air M1 with 8GB memory.
+
 # How to run
 
 Because each benchmark requires a language-specific toolchain to build/run,
