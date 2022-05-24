@@ -1,4 +1,4 @@
-FROM haskell:8.8
+FROM haskell:9.2
 COPY Main.hs .
 RUN ghc -O2 -optc-O3 Main.hs
 ENTRYPOINT ["./Main"]

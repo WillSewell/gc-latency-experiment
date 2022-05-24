@@ -1,3 +1,3 @@
-FROM node:9
+FROM node:18.2
 COPY main.js .
 ENTRYPOINT ["node", "./main"]

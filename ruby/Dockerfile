@@ -1,3 +1,3 @@
-FROM ruby:2.4
+FROM ruby:3.1
 COPY main.rb .
 ENTRYPOINT ["ruby", "main.rb"]

@@ -1,4 +1,4 @@
-FROM ocaml/opam2:4.10
+FROM ocaml/opam:debian-ocaml-4.14
 WORKDIR /home/opam/src
 COPY main.ml .
 COPY _tags .

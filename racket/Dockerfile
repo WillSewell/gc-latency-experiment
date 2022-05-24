@@ -1,4 +1,4 @@
-FROM jackfirth/racket:6.10
+FROM racket/racket:7.9
 COPY main.rkt .
 COPY docker-entrypoint.sh .
 RUN chmod +x docker-entrypoint.sh
