@@ -1,5 +1,3 @@
-open Batteries
-
 module IMap = Map.Make(Int)
 
 type msg = string
@@ -30,4 +28,4 @@ let () =
     |> Seq.fold_left push_msg IMap.empty
     |> ignore
   end;
-  Printf.printf "Worst pause: %.2E\n" !worst
+  Printf.printf "Worst push time: %.6fms\n" (!worst *. 1000.)
