@@ -28,7 +28,7 @@ collector (Haskell) exhibits unpleasant latencies.
 | Haskell (GHC 9.2)                    | 116.283                                 |
 | Java (OpenJDK 19)                    | 15                                      |
 | Node (18.2)                          | 70                                      |
-| OCaml (4.12)                         | 81.594                                  |
+| OCaml (5.2)                          | 11.826                                  |
 | PHP (8.1)                            | 6.694                                   |
 | Python (3.9)                         | 11.830                                  |
 | Racket (7.9)                         | 323.15                                  |
