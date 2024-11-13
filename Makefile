@@ -1,4 +1,4 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt crystal/results.txt common-lisp/results-sbcl.txt common-lisp/results-sbcl.txt common-lisp/results-ecl-interp.txt common-lisp/results-ecl-compile.txt common-lisp/results-ccl.txt
+RESULTS = d/results.txt go/results.txt haskell/results.txt haskell-nonmoving/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt dotnet/results.txt python/results.txt c/results.txt erlang/results.txt crystal/results.txt common-lisp/results-sbcl.txt common-lisp/results-sbcl.txt common-lisp/results-ecl-interp.txt common-lisp/results-ecl-compile.txt common-lisp/results-ccl.txt
 
 .PHONY: all clean
 
@@ -18,6 +18,10 @@ go/results.txt: go/Dockerfile go/main.go
 haskell/results.txt: haskell/Dockerfile haskell/Main.hs
 	docker build -t gc-haskell haskell
 	docker run gc-haskell > $@
+
+haskell-nonmoving/results.txt: haskell-nonmoving/Dockerfile haskell-nonmoving/Main.hs
+	docker build -t gc-haskell-nonmoving haskell-nonmoving
+	docker run gc-haskell-nonmoving > $@
 
 java/results.txt: java/Dockerfile java/Main.java
 	docker build -t gc-java java
